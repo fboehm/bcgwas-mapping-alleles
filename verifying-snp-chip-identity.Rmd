@@ -18,18 +18,13 @@ Questions include:
 2. Do I have the files needed to map from GTex (which labels alleles as minor & major, for some population?) to base identities? Or do I need additional files from 1000 Genomes??
 
 
+## Downloading annotation files from www.biostat.wisc.edu/~ngroup/bcgwas/SNPB/
 
-## How many SNPs are in the bcgwas data set? 
-
-
-```{r "load-bcgwas-snpann", cache=TRUE}
-load("../bcgwas-data/SNP_annotation/illumina.madison.snp.annot.v3.RData")
-```
+We downloaded the file ""
 
 Now, we read the annotation files from illumina.
 
-
-
-
 ```{r}
+
+
 

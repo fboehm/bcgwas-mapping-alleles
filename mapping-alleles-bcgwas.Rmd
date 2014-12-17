@@ -1,0 +1,26 @@
+---
+title: "Untitled"
+author: "Fred Boehm"
+date: "December 16, 2014"
+output: html_document
+---
+
+## Revision to original strategy
+
+My earlier idea was to download annotation files from illumina.com. However, I was unsure which files corresponded to our chip for bcgwas. It then occurred to me that some of the originally downloaded files, which Michael got from the Washington University genotyping facility, might have the allele mappings.
+
+Note that we'll also need to see how I coded the alleles when creating the numeric genotypes.
+
+
+## Downloading annotation files from www.biostat.wisc.edu/~ngroup/bcgwas/SNPB/
+
+We downloaded the file "SNP_Data_Gould_Infinium_1M_Omni/SNP_Map.csv"
+
+Now, we read that file into R.
+
+```{r, cache=TRUE}
+smap<- read.csv("SNP_Map.csv")
+head(smap)
+```
+
+
