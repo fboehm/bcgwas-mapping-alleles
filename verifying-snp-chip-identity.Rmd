@@ -1,0 +1,35 @@
+---
+title: "Verifying the SNP chip that was used in bcgwas study"
+author: "Fred Boehm"
+date: "December 12, 2014"
+output: html_document
+---
+
+I downloaded on Dec 12, 2014, documentation files from Illumina's website. I had to create a log-in to get these. On Dec 13, 2014, I downloaded files from http://www.gtexportal.org/home/. Getting these files required me to create a log-in, but there was no delay in waiting for access.
+
+To ensure that I'm using the correct SNP chip documentation files, I want to look at the SNP genotype object from bcgwas study to ensure that all SNP ids are in the documentation files that I've downloaded from Illumina's website.
+
+The idea is that, with the correct SNP documentation files, we can map the illumina (A,B) allele genotypes to the actual base identities (A,C,T,G) at a given SNP. Similarly, we can map the GTex genotypes to the base identities using documentation from GTex and possibly from 1000 Genomes.
+
+Questions include:
+
+1. Did I download the correct set of illumina documentation files (ie, those for the correct SNP chip)?
+
+2. Do I have the files needed to map from GTex (which labels alleles as minor & major, for some population?) to base identities? Or do I need additional files from 1000 Genomes??
+
+
+
+## How many SNPs are in the bcgwas data set? 
+
+
+```{r "load-bcgwas-snpann", cache=TRUE}
+load("../bcgwas-data/SNP_annotation/illumina.madison.snp.annot.v3.RData")
+```
+
+Now, we read the annotation files from illumina.
+
+
+
+
+```{r}
+
