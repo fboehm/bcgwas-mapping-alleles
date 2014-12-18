@@ -68,8 +68,8 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <h2>Downloading annotation files from www.biostat.wisc.edu/~ngroup/bcgwas/SNPB/</h2>
 <p>We downloaded the file “SNP_Data_Gould_Infinium_1M_Omni/SNP_Map.csv”</p>
 <p>Now, we read that file into R.</p>
-<pre class="r"><code>smap&lt;- read.csv(&quot;SNP_Map.csv&quot;)
-head(smap)</code></pre>
+<pre class="r"><code>smap1&lt;- read.csv(&quot;data/SNP_Map.csv&quot;)
+head(smap1)</code></pre>
 <pre><code>##   Index   Name Chromosome  Position GenTrain.Score   SNP ILMN.Strand
 ## 1     1 200006          9 139046223         0.8077 [A/G]         TOP
 ## 2     2 200052          2 219783037         0.9152 [T/A]         BOT
@@ -84,6 +84,80 @@ head(smap)</code></pre>
 ## 4             BOT    102
 ## 5             BOT    202
 ## 6             BOT      2</code></pre>
+<p>It seems that the SNP_Map.csv file contains insufficient. I’ll check the other file, “ForwardStrand_FinalReport.csv”</p>
+<pre class="r"><code>smap&lt;- read.csv(&quot;data/ForwardStrand_FinalReport.csv&quot;, skip=9)
+names(smap)[1] &lt;- &quot;snp.id&quot;
+head(smap)</code></pre>
+<pre><code>##   snp.id       N10       N11       N18       N19       N21       N25
+## 1 200006 CC|0.7716 TC|0.8273 TC|0.8273 TC|0.8273 CC|0.8273 TC|0.8273
+## 2 200052 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487
+## 3 200053 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645
+## 4 200070 GG|0.9347 CC|0.9347 GC|0.9347 GG|0.9273 GC|0.9347 GC|0.5202
+## 5 200078 CC|0.6885 GC|0.6885 GG|0.6885 CC|0.6885 GC|0.6885 GC|0.6885
+## 6 200087 GG|0.8085 TT|0.8085 TT|0.8085 TG|0.8085 TT|0.8085 TG|0.8085
+##         N27       N28       N29       N31       N32       N34       N39
+## 1 TC|0.8273 TC|0.8273 CC|0.8273 TC|0.8273 CC|0.8273 TC|0.8273 TC|0.8273
+## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9467 TT|0.9487
+## 3 TT|0.6645 TT|0.6272 TT|0.6645 TT|0.6645 TT|0.1909 TT|0.6645 TT|0.6645
+## 4 GC|0.9347 GC|0.9347 CC|0.9347 GC|0.7360 GC|0.9347 GG|0.9347 GG|0.7594
+## 5 GC|0.6885 GC|0.6885 GG|0.6885 CC|0.6885 GC|0.6885 GC|0.6885 CC|0.6885
+## 6 TG|0.8085 TT|0.8085 TT|0.8085 TG|0.8085 TG|0.8085 TG|0.8085 TT|0.8085
+##         N40       N41       N44       N45       N47       N50       N52
+## 1 TC|0.8273 CC|0.8273 CC|0.8273 TT|0.8273 CC|0.8273 CC|0.8273 CC|0.8273
+## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487
+## 3 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645
+## 4 GC|0.9347 GC|0.9347 GC|0.9347 CC|0.9347 CC|0.9347 GC|0.9347 GG|0.9206
+## 5 CC|0.6885 CC|0.6885 GC|0.6885 GG|0.6885 GC|0.6885 CC|0.6885 GC|0.6885
+## 6 TT|0.8085 TG|0.7824 TG|0.8085 TT|0.8085 TT|0.8085 TT|0.8085 TT|0.8085
+##         N54       N57       N78       N80       N81       N84       N88
+## 1 CC|0.8273 CC|0.8273 TT|0.8273 TT|0.8273 CC|0.8273 TC|0.8273 CC|0.8273
+## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 AT|0.9487
+## 3 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TC|0.6645
+## 4 --|0.0000 GG|0.9332 CC|0.9347 GG|0.9347 GG|0.9347 GG|0.9347 GG|0.9347
+## 5 GC|0.6885 CC|0.6885 GG|0.6885 CC|0.6885 GC|0.6885 CC|0.6885 CC|0.6885
+## 6 TG|0.7885 TT|0.8085 TG|0.8085 TT|0.8085 TG|0.8085 GG|0.8085 TT|0.8085
+##         N95       N97      N104   N31.rep   N57.rep
+## 1 TC|0.8273 TT|0.8273 CC|0.8273 TC|0.8273 CC|0.8273
+## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487
+## 3 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645
+## 4 GC|0.9347 CC|0.9347 GC|0.9347 GC|0.9246 GG|0.7637
+## 5 CC|0.6885 GC|0.6856 GC|0.6885 CC|0.6885 CC|0.6885
+## 6 TT|0.8085 TT|0.8085 TG|0.8085 TG|0.8085 TT|0.8085</code></pre>
+<pre class="r"><code>smap2&lt;- read.csv(&quot;data/test.csv&quot;, skip=9)
+head(smap2)</code></pre>
+<pre><code>##        X       N10       N11       N18       N19       N21       N25
+## 1 200006 CC|0.7716 TC|0.8273 TC|0.8273 TC|0.8273 CC|0.8273 TC|0.8273
+## 2 200052 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487
+## 3 200053 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645
+## 4 200070 GG|0.9347 CC|0.9347 GC|0.9347 GG|0.9273 GC|0.9347 GC|0.5202
+## 5 200078 CC|0.6885 GC|0.6885 GG|0.6885 CC|0.6885 GC|0.6885 GC|0.6885
+##         N27       N28       N29       N31       N32       N34       N39
+## 1 TC|0.8273 TC|0.8273 CC|0.8273 TC|0.8273 CC|0.8273 TC|0.8273 TC|0.8273
+## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9467 TT|0.9487
+## 3 TT|0.6645 TT|0.6272 TT|0.6645 TT|0.6645 TT|0.1909 TT|0.6645 TT|0.6645
+## 4 GC|0.9347 GC|0.9347 CC|0.9347 GC|0.7360 GC|0.9347 GG|0.9347 GG|0.7594
+## 5 GC|0.6885 GC|0.6885 GG|0.6885 CC|0.6885 GC|0.6885 GC|0.6885 CC|0.6885
+##         N40       N41       N44       N45       N47       N50       N52
+## 1 TC|0.8273 CC|0.8273 CC|0.8273 TT|0.8273 CC|0.8273 CC|0.8273 CC|0.8273
+## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487
+## 3 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645
+## 4 GC|0.9347 GC|0.9347 GC|0.9347 CC|0.9347 CC|0.9347 GC|0.9347 GG|0.9206
+## 5 CC|0.6885 CC|0.6885 GC|0.6885 GG|0.6885 GC|0.6885 CC|0.6885 GC|0.6885
+##         N54       N57       N78       N80       N81       N84       N88
+## 1 CC|0.8273 CC|0.8273 TT|0.8273 TT|0.8273 CC|0.8273 TC|0.8273 CC|0.8273
+## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 AT|0.9487
+## 3 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TC|0.6645
+## 4 --|0.0000 GG|0.9332 CC|0.9347 GG|0.9347 GG|0.9347 GG|0.9347 GG|0.9347
+## 5 GC|0.6885 CC|0.6885 GG|0.6885 CC|0.6885 GC|0.6885 CC|0.6885 CC|0.6885
+##         N95       N97      N104   N31.rep   N57.rep
+## 1 TC|0.8273 TT|0.8273 CC|0.8273 TC|0.8273 CC|0.8273
+## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487
+## 3 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645
+## 4 GC|0.9347 CC|0.9347 GC|0.9347 GC|0.9246 GG|0.7637
+## 5 CC|0.6885 GC|0.6856 GC|0.6885 CC|0.6885 CC|0.6885</code></pre>
+<p>Once we have the mapping from A/B to A/C/T/G, we can create a small genotype file from the raw csv file and compare it with the geno.ord.RData file. Note that we need to do this to ensure that we know how we created geno.ord.RData as far as mapping A/B to 0,1,2 genotype classes. It may be that I didn’t translate the ACTG to Illumina’s AB; rather, I might have arbitrarily chosen an allele as the “A” and then counted for each genotype, the number of “A” alleles.</p>
+<p>This raises a bigger question – can I reproduce the pre-processing steps in the bcgwas analysis?</p>
+<p><strong>I’d like to try to regenerate geno.ord.RData from the source files.</strong></p>
 </div>
 
 

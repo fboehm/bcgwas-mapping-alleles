@@ -9,6 +9,9 @@
 .Rproj.user
 # data directory
 data/
-
 #cache
 mapping-alleles-bcgwas_cache/
+packrat/lib*/
+
+.gitignore
+.Rprofile
