@@ -19,8 +19,22 @@ We downloaded the file "SNP_Data_Gould_Infinium_1M_Omni/SNP_Map.csv"
 Now, we read that file into R.
 
 ```{r, cache=TRUE}
-smap<- read.csv("SNP_Map.csv")
+smap1<- read.csv("SNP_Map.csv")
+head(smap1)
+```
+
+It seems that the SNP_Map.csv file contains  insufficient. I'll check the other file, "ForwardStrand_FinalReport.csv"
+
+```{r, cache=TRUE}
+smap<- read.csv("ForwardStrand_FinalReport.csv", skip=9)
+names(smap)[1] <- "snp.id"
 head(smap)
 ```
+
+```{r, cache=TRUE}
+smap2<- read.csv("test.csv", skip=9)
+head(smap2)
+```
+Once we have the mapping from A/B to A/C/T/G, we can create a small genotype file from the raw csv file and compare it with the geno.ord.RData file. Note that we need to do this to ensure that we know how we created geno.ord.RData as far as mapping A/B to 0,1,2 genotype classes.
 
 
