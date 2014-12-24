@@ -14,25 +14,31 @@ Note that we'll also need to see how I coded the alleles when creating the numer
 
 ## Downloading annotation files from www.biostat.wisc.edu/~ngroup/bcgwas/SNPB/
 
+```{r}
+DATA_DIR <- "../bcgwas-ngroup/data"
+```
+
 We downloaded the file "SNP_Data_Gould_Infinium_1M_Omni/SNP_Map.csv"
 
 Now, we read that file into R.
 
-```{r, cache=TRUE}
-smap1<- read.csv("data/SNP_Map.csv")
+```{r, cache=TRUE, eval=FALSE}
+# 'eval=FALSE' means that we don't execute this chunk
+smap1<- read.csv(file.path(DATA_DIR,"SNP_Map.csv")) 
 head(smap1)
 ```
 
 It seems that the SNP_Map.csv file contains  insufficient. I'll check the other file, "ForwardStrand_FinalReport.csv"
 
 ```{r, cache=TRUE}
-smap<- read.csv("data/ForwardStrand_FinalReport.csv", skip=9)
+smap<- read.csv(file.path(DATA_DIR,"ForwardStrand_FinalReport.csv"), skip=9)
 names(smap)[1] <- "snp.id"
 head(smap)
 ```
 
-```{r, cache=TRUE}
-smap2<- read.csv("data/test.csv", skip=9)
+```{r, cache=TRUE, eval=FALSE}
+smap2<- read.csv(file.path(DATA_DIR, "test.csv"), skip=9) 
+# test.csv is the "head" (first ~50 lines ) of ForwardStrand_FinalReport.csv
 head(smap2)
 ```
 
@@ -43,6 +49,23 @@ This raises a bigger question -- can I reproduce the pre-processing steps in the
 
 **I'd like to try to regenerate geno.ord.RData from the source files.**
 
+# Dec 24, 2014
+
+## Reading text file from ngroup/snp directory
+
+```{r, eval=FALSE, cache=TRUE}
+read.delim(file.path(DATA_DIR, "snp", "Data")
+#install.packages("http://cran.r-project.org/src/contrib/Archive/gdsfmt/gdsfmt_1.0.0.tar.gz", repos=NULL)
+```
+
+## Reading in geno.ord.RData 
+
+We are trying to re-create the geno.ord.RData file. We want to compare a portion the current geno.ord.RData file with the file that we'd get from `r head(smap)` object. We also load the snp annotation object that we created in august 2011.
+
+```{r "reading-geno.ord", cache=TRUE, eval=TRUE}
+load("../bcgwas-data/EIGENBCGWAS_Data/geno.ord.RData") # loads geno.ord
+load("../bcgwas-data/SNP_annotation/illumina.madison.snp.annot.v3.RData")
+```
 
 
 
