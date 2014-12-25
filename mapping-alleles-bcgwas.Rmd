@@ -84,38 +84,24 @@ We then
 ```{r, "genoquery-defined"}
 split1 <- function(x)strsplit(x, "|")[1:2]
   
-split2<- function(x){xx<- t(split1(x)); return(xx)
+split2<- function(x){t(split1(x))}
 
-
-genoquery <- function(rsid="", # rs.id is the snp id.
-                    genofile = "geno.ord.RData", # the genotype file that is used in Nate's site. Use full path
-                    textfile = "ForwardStrand_FinalReport.csv" # the file with Madison's data. Use full path
-                    )
+genocount <- function(gv.actg) # gv.actg is a character vector with each entry a 2-letter genotype
   {
-  geno.ord<- getobj(genofile)
-  smap<- read.csv(genofile, skip=9, colClasses = "character") 
-# test.csv is the "head" (first ~50 lines ) of ForwardStrand_FinalReport.csv
-  names(smap)[1] <- "snp.id"
-  roi<- which(smap[,1] %in% rsid) # row of interest
-  gv <- as.vector(smap[roi,c(-1,-11, -23, -32, -33)])
-  subjid <- colnames(smap[,-1, -11, -23, -32, -33])
-  # get genotype vector from text file for Madison samples  
-  foo<- split2(gv)
-  foo[foo == "-"]<- NA 
-  levs<- levels(as.factor(foo))
-  # output is the genotype count
-  o1<- apply(X=foo, FUN = function(x){sum(x == levs[1])})
-  o2 <- geno.ord[which(rownames(geno.ord) %in% rsid), colnames(geno.ord) %in% subjid]
-  out<- list(o1, o2)
-  names(out)<- c("text-file", "geno.ord")
-  return(out) # names correspond to source of the data
+  foo<- strsplit(gv.actg, "")
+  f2<- matrix(ncol = 2, data=unlist(foo), byrow=TRUE)
+  apply(FUN = function(x)sum(x==f2[1]), X = f2, MARGIN=1)
   }
-
-## get the genotypes from geno.ord
-
 
 
 ```
 
+Now, try genoquery function.
 
+```{r}
 
+```
+
+Next steps: 
+
+1. 
