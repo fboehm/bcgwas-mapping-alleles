@@ -31,7 +31,7 @@ head(smap1)
 It seems that the SNP_Map.csv file contains  insufficient. I'll check the other file, "ForwardStrand_FinalReport.csv"
 
 ```{r, cache=TRUE}
-smap<- read.csv(file.path(DATA_DIR,"ForwardStrand_FinalReport.csv"), skip=9)
+smap<- read.csv(file.path(DATA_DIR,"ForwardStrand_FinalReport.csv"), skip=9, colClasses= "character")
 names(smap)[1] <- "snp.id"
 head(smap)
 ```
@@ -64,7 +64,57 @@ We are trying to re-create the geno.ord.RData file. We want to compare a portion
 
 ```{r "reading-geno.ord", cache=TRUE, eval=TRUE}
 load("../bcgwas-data/EIGENBCGWAS_Data/geno.ord.RData") # loads geno.ord
-load("../bcgwas-data/SNP_annotation/illumina.madison.snp.annot.v3.RData")
+sann<- pData(getobj("../bcgwas-data/SNP_annotation/illumina.madison.snp.annot.v3.RData"))
+```
+
+```{r "split1-defined", cache=TRUE, eval=TRUE}
+split1 <- function(x)strsplit(x, "|")
+sa <- split1(as.character(smap[1,-1]))
+t(sapply(X=sa, FUN=function(x)x[1:2]))
+colnames(smap)
+newdat <- smap[,c(-11, -23, -32, -33)]
+split2 <- function(x) # one row of  data (ie, one snp) is 
+
+```
+
+We then removed all four runs involving N31 & N57 since I don't recall which - N31 or N31.rep and N57.rep or N57 - was used. I'm quite certain that the ".rep" columns were used, but I don't know whether these two are part of the correlation issue.
+
+We then 
+
+```{r, "genoquery-defined"}
+split1 <- function(x)strsplit(x, "|")[1:2]
+  
+split2<- function(x){xx<- t(split1(x)); return(xx)
+
+
+genoquery <- function(rsid="", # rs.id is the snp id.
+                    genofile = "geno.ord.RData", # the genotype file that is used in Nate's site. Use full path
+                    textfile = "ForwardStrand_FinalReport.csv" # the file with Madison's data. Use full path
+                    )
+  {
+  geno.ord<- getobj(genofile)
+  smap<- read.csv(genofile, skip=9, colClasses = "character") 
+# test.csv is the "head" (first ~50 lines ) of ForwardStrand_FinalReport.csv
+  names(smap)[1] <- "snp.id"
+  roi<- which(smap[,1] %in% rsid) # row of interest
+  gv <- as.vector(smap[roi,c(-1,-11, -23, -32, -33)])
+  subjid <- colnames(smap[,-1, -11, -23, -32, -33])
+  # get genotype vector from text file for Madison samples  
+  foo<- split2(gv)
+  foo[foo == "-"]<- NA 
+  levs<- levels(as.factor(foo))
+  # output is the genotype count
+  o1<- apply(X=foo, FUN = function(x){sum(x == levs[1])})
+  o2 <- geno.ord[which(rownames(geno.ord) %in% rsid), colnames(geno.ord) %in% subjid]
+  out<- list(o1, o2)
+  names(out)<- c("text-file", "geno.ord")
+  return(out) # names correspond to source of the data
+  }
+
+## get the genotypes from geno.ord
+
+
+
 ```
 
 
