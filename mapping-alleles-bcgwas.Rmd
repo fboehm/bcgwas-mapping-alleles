@@ -90,18 +90,27 @@ genocount <- function(gv.actg) # gv.actg is a character vector with each entry a
   {
   foo<- strsplit(gv.actg, "")
   f2<- matrix(ncol = 2, data=unlist(foo), byrow=TRUE)
-  apply(FUN = function(x)sum(x==f2[1]), X = f2, MARGIN=1)
+  o1  <- apply(FUN = function(x)sum(x==f2[1]), X = f2, MARGIN=1)
+  other<- f2[f2 != f2[1]][1]
+  ref <- f2[1]
+  o2 <- c(ref, other)
+  out<- list(o1, o2)
+  names(out)<- c("genovec", "allele identities")
+  return(out)
   }
 
 
 ```
 
-Now, try genoquery function.
+Now, try genocount function.
 
 ```{r}
-
+t1 <- c("TT", "TC", "CC", "CC")
+genocount(t1)
 ```
 
 Next steps: 
 
-1. 
+1. function to compare the genotype vector from geno.ord with that outputted by genocount()
+2. 
+
