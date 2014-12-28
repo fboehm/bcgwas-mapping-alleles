@@ -64,6 +64,7 @@ We are trying to re-create the geno.ord.RData file. We want to compare a portion
 
 ```{r "reading-geno.ord", cache=TRUE, eval=TRUE}
 load("../bcgwas-data/EIGENBCGWAS_Data/geno.ord.RData") # loads geno.ord
+library(GWASTools)
 sann<- pData(getobj("../bcgwas-data/SNP_annotation/illumina.madison.snp.annot.v3.RData"))
 ```
 
@@ -73,7 +74,6 @@ sa <- split1(as.character(smap[1,-1]))
 t(sapply(X=sa, FUN=function(x)x[1:2]))
 colnames(smap)
 newdat <- smap[,c(-11, -23, -32, -33)]
-split2 <- function(x) # one row of  data (ie, one snp) is 
 
 ```
 
@@ -86,32 +86,38 @@ split1 <- function(x)strsplit(x, "|")[1:2]
   
 split2<- function(x){t(split1(x))}
 
-genoparse <- function(gv.actg) # gv.actg is a character vector with each entry a 2-letter genotype
-  {
+genoparse <- function(gv.actg, # gv.actg is a character vector with each entry a 2-letter genotype
+                       sid=names(gv.actg) # sid is the vector of subject IDs
+                      )  
+{
   foo<- strsplit(gv.actg, "")
   f2<- matrix(ncol = 2, data=unlist(foo), byrow=TRUE)
   o1  <- apply(FUN = function(x)sum(x==f2[1]), X = f2, MARGIN=1)
   other<- f2[f2 != f2[1]][1]
   ref <- f2[1]
   o2 <- c(ref, other)
-  out<- list(o1, o2)
-  names(out)<- c("genovec", "allele identities")
+  names(o2)<- c("ref", "oth")
+  names(o1)<- sid
+  names(gv.actg)<- sid
+  out<- list(gv.actg, o1, o2)
+  names(out)<- c("input_geno", "genovec", "allele_identities")
   return(out)
   }
 
 
 ```
 
-Now, try genocount function.
+Now, try genoparse function.
 
 ```{r}
 t1 <- c("TT", "TC", "CC", "CC")
-genocount(t1)
+names(t1)<- paste0("subj", 1:4)
+genoparse(t1)
 ```
 
 Next steps: 
 
-1. function to compare the genotype vector from geno.ord with that outputted by genocount()
+1. function to compare the genotype vector from geno.ord with that outputted by genoparse()
 2. after comparing, decide which allele is mapped to 1 and which to zero in geno.ord.
 
 
