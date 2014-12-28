@@ -56,7 +56,7 @@ This raises a bigger question -- can I reproduce the pre-processing steps in the
 
 ## Reading in geno.ord.RData 
 
-We are trying to re-create the geno.ord.RData file. We want to compare a portion the current geno.ord.RData file with the file that we'd get from `r head(smap)` object. We also load the snp annotation object that we created in august 2011.
+We are trying to re-create the geno.ord.RData file. We want to compare a portion the current geno.ord.RData file with the file that we'd get from smap object. We also load the snp annotation object that we created in august 2011.
 
 ```{r "reading-geno.ord", cache=TRUE, eval=TRUE}
 load("../bcgwas-data/EIGENBCGWAS_Data/geno.ord.RData") # loads geno.ord
@@ -70,7 +70,6 @@ sa <- split1(as.character(smap[1,-1]))
 t(sapply(X=sa, FUN=function(x)x[1:2]))
 colnames(smap)
 newdat <- smap[,c(-11, -23, -32, -33)]
-
 ```
 
 We then removed all four runs involving N31 & N57 since I don't recall which - N31 or N31.rep and N57.rep or N57 - was used. I'm quite certain that the ".rep" columns were used, but I don't know whether these two are part of the correlation issue.
@@ -95,8 +94,14 @@ genoparse <- function(gv.actg, # gv.actg is a character vector with each entry a
   names(o2)<- c("ref", "oth")
   names(o1)<- sid
   names(gv.actg)<- sid
-  out<- list(gv.actg, o1, o2)
-  names(out)<- c("input_geno", "genovec", "allele_identities")
+  out1<- list(gv.actg, o1, o2)
+  names(out1)<- c("input_geno", "genovec", "allele_identities")
+  o4 <- c(other, ref)
+  names(o4)<- c("ref", "oth")
+  o3 <- 2-o1
+  out2 <- list(gv.actg, o3, o4)
+  names(out2)<- c("input_geno", "genovec", "allele_identities")  
+  out <- list(out1, out2)
   return(out)
   }
 
@@ -117,4 +122,12 @@ Next steps:
 2. after comparing, decide which allele is mapped to 1 and which to zero in geno.ord.
 
 
+```{r "userfn-defined"}
+userfn <- function(rs.id, geno.ord = geno.ord, gm.actg = newdat)
+  {
+  
+  
+  return(out) # out is a list. first entry is a df with 4 columns (one subject per row): 1. genotype.actg, 2. genotype.numeric (from geno.ord), 3. genotype.actg translation #1, 4. genotype.actg translation #2. 
+  }
+```
 

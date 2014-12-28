@@ -66,26 +66,14 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </div>
 <div id="downloading-annotation-files-from-www.biostat.wisc.edungroupbcgwassnpb" class="section level2">
 <h2>Downloading annotation files from www.biostat.wisc.edu/~ngroup/bcgwas/SNPB/</h2>
+<pre class="r"><code>DATA_DIR &lt;- &quot;../bcgwas-ngroup/data&quot;</code></pre>
 <p>We downloaded the file “SNP_Data_Gould_Infinium_1M_Omni/SNP_Map.csv”</p>
 <p>Now, we read that file into R.</p>
-<pre class="r"><code>smap1&lt;- read.csv(&quot;data/SNP_Map.csv&quot;)
+<pre class="r"><code># 'eval=FALSE' means that we don't execute this chunk
+smap1&lt;- read.csv(file.path(DATA_DIR,&quot;SNP_Map.csv&quot;)) 
 head(smap1)</code></pre>
-<pre><code>##   Index   Name Chromosome  Position GenTrain.Score   SNP ILMN.Strand
-## 1     1 200006          9 139046223         0.8077 [A/G]         TOP
-## 2     2 200052          2 219783037         0.9152 [T/A]         BOT
-## 3     3 200053          2 219783289         0.7133 [T/C]         BOT
-## 4     4 200070         16  16174099         0.8984 [G/C]         BOT
-## 5     5 200078         16  16194115         0.7261 [C/G]         TOP
-## 6     6 200087         16  16153665         0.7954 [T/G]         BOT
-##   Customer.Strand NormID
-## 1             BOT      2
-## 2             TOP    200
-## 3             BOT      2
-## 4             BOT    102
-## 5             BOT    202
-## 6             BOT      2</code></pre>
 <p>It seems that the SNP_Map.csv file contains insufficient. I’ll check the other file, “ForwardStrand_FinalReport.csv”</p>
-<pre class="r"><code>smap&lt;- read.csv(&quot;data/ForwardStrand_FinalReport.csv&quot;, skip=9)
+<pre class="r"><code>smap&lt;- read.csv(file.path(DATA_DIR,&quot;ForwardStrand_FinalReport.csv&quot;), skip=9, colClasses= &quot;character&quot;)
 names(smap)[1] &lt;- &quot;snp.id&quot;
 head(smap)</code></pre>
 <pre><code>##   snp.id       N10       N11       N18       N19       N21       N25
@@ -123,41 +111,145 @@ head(smap)</code></pre>
 ## 4 GC|0.9347 CC|0.9347 GC|0.9347 GC|0.9246 GG|0.7637
 ## 5 CC|0.6885 GC|0.6856 GC|0.6885 CC|0.6885 CC|0.6885
 ## 6 TT|0.8085 TT|0.8085 TG|0.8085 TG|0.8085 TT|0.8085</code></pre>
-<pre class="r"><code>smap2&lt;- read.csv(&quot;data/test.csv&quot;, skip=9)
+<pre class="r"><code>smap2&lt;- read.csv(file.path(DATA_DIR, &quot;test.csv&quot;), skip=9) 
+# test.csv is the &quot;head&quot; (first ~50 lines ) of ForwardStrand_FinalReport.csv
 head(smap2)</code></pre>
-<pre><code>##        X       N10       N11       N18       N19       N21       N25
-## 1 200006 CC|0.7716 TC|0.8273 TC|0.8273 TC|0.8273 CC|0.8273 TC|0.8273
-## 2 200052 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487
-## 3 200053 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645
-## 4 200070 GG|0.9347 CC|0.9347 GC|0.9347 GG|0.9273 GC|0.9347 GC|0.5202
-## 5 200078 CC|0.6885 GC|0.6885 GG|0.6885 CC|0.6885 GC|0.6885 GC|0.6885
-##         N27       N28       N29       N31       N32       N34       N39
-## 1 TC|0.8273 TC|0.8273 CC|0.8273 TC|0.8273 CC|0.8273 TC|0.8273 TC|0.8273
-## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9467 TT|0.9487
-## 3 TT|0.6645 TT|0.6272 TT|0.6645 TT|0.6645 TT|0.1909 TT|0.6645 TT|0.6645
-## 4 GC|0.9347 GC|0.9347 CC|0.9347 GC|0.7360 GC|0.9347 GG|0.9347 GG|0.7594
-## 5 GC|0.6885 GC|0.6885 GG|0.6885 CC|0.6885 GC|0.6885 GC|0.6885 CC|0.6885
-##         N40       N41       N44       N45       N47       N50       N52
-## 1 TC|0.8273 CC|0.8273 CC|0.8273 TT|0.8273 CC|0.8273 CC|0.8273 CC|0.8273
-## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487
-## 3 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645
-## 4 GC|0.9347 GC|0.9347 GC|0.9347 CC|0.9347 CC|0.9347 GC|0.9347 GG|0.9206
-## 5 CC|0.6885 CC|0.6885 GC|0.6885 GG|0.6885 GC|0.6885 CC|0.6885 GC|0.6885
-##         N54       N57       N78       N80       N81       N84       N88
-## 1 CC|0.8273 CC|0.8273 TT|0.8273 TT|0.8273 CC|0.8273 TC|0.8273 CC|0.8273
-## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 AT|0.9487
-## 3 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TC|0.6645
-## 4 --|0.0000 GG|0.9332 CC|0.9347 GG|0.9347 GG|0.9347 GG|0.9347 GG|0.9347
-## 5 GC|0.6885 CC|0.6885 GG|0.6885 CC|0.6885 GC|0.6885 CC|0.6885 CC|0.6885
-##         N95       N97      N104   N31.rep   N57.rep
-## 1 TC|0.8273 TT|0.8273 CC|0.8273 TC|0.8273 CC|0.8273
-## 2 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487 TT|0.9487
-## 3 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645 TT|0.6645
-## 4 GC|0.9347 CC|0.9347 GC|0.9347 GC|0.9246 GG|0.7637
-## 5 CC|0.6885 GC|0.6856 GC|0.6885 CC|0.6885 CC|0.6885</code></pre>
 <p>Once we have the mapping from A/B to A/C/T/G, we can create a small genotype file from the raw csv file and compare it with the geno.ord.RData file. Note that we need to do this to ensure that we know how we created geno.ord.RData as far as mapping A/B to 0,1,2 genotype classes. It may be that I didn’t translate the ACTG to Illumina’s AB; rather, I might have arbitrarily chosen an allele as the “A” and then counted for each genotype, the number of “A” alleles.</p>
 <p>This raises a bigger question – can I reproduce the pre-processing steps in the bcgwas analysis?</p>
 <p><strong>I’d like to try to regenerate geno.ord.RData from the source files.</strong></p>
+</div>
+<div id="dec-24-2014" class="section level1">
+<h1>Dec 24, 2014</h1>
+<div id="reading-text-file-from-ngroupsnp-directory" class="section level2">
+<h2>Reading text file from ngroup/snp directory</h2>
+</div>
+<div id="reading-in-geno.ord.rdata" class="section level2">
+<h2>Reading in geno.ord.RData</h2>
+<p>We are trying to re-create the geno.ord.RData file. We want to compare a portion the current geno.ord.RData file with the file that we’d get from smap object. We also load the snp annotation object that we created in august 2011.</p>
+<pre class="r"><code>load(&quot;../bcgwas-data/EIGENBCGWAS_Data/geno.ord.RData&quot;) # loads geno.ord
+library(GWASTools)</code></pre>
+<pre><code>## Loading required package: Biobase
+## Loading required package: BiocGenerics
+## Loading required package: parallel
+## 
+## Attaching package: 'BiocGenerics'
+## 
+## The following objects are masked from 'package:parallel':
+## 
+##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+##     clusterExport, clusterMap, parApply, parCapply, parLapply,
+##     parLapplyLB, parRapply, parSapply, parSapplyLB
+## 
+## The following object is masked from 'package:stats':
+## 
+##     xtabs
+## 
+## The following objects are masked from 'package:base':
+## 
+##     anyDuplicated, append, as.data.frame, as.vector, cbind,
+##     colnames, do.call, duplicated, eval, evalq, Filter, Find, get,
+##     intersect, is.unsorted, lapply, Map, mapply, match, mget,
+##     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+##     rbind, Reduce, rep.int, rownames, sapply, setdiff, sort,
+##     table, tapply, union, unique, unlist
+## 
+## Welcome to Bioconductor
+## 
+##     Vignettes contain introductory material; view with
+##     'browseVignettes()'. To cite Bioconductor, see
+##     'citation(&quot;Biobase&quot;)', and for packages 'citation(&quot;pkgname&quot;)'.
+## 
+## Loading required package: ncdf
+## Loading required package: gdsfmt
+## Loading required package: sandwich</code></pre>
+<pre class="r"><code>sann&lt;- pData(getobj(&quot;../bcgwas-data/SNP_annotation/illumina.madison.snp.annot.v3.RData&quot;))</code></pre>
+<pre class="r"><code>split1 &lt;- function(x)strsplit(x, &quot;|&quot;)
+sa &lt;- split1(as.character(smap[1,-1]))
+t(sapply(X=sa, FUN=function(x)x[1:2]))</code></pre>
+<pre><code>##       [,1] [,2]
+##  [1,] &quot;C&quot;  &quot;C&quot; 
+##  [2,] &quot;T&quot;  &quot;C&quot; 
+##  [3,] &quot;T&quot;  &quot;C&quot; 
+##  [4,] &quot;T&quot;  &quot;C&quot; 
+##  [5,] &quot;C&quot;  &quot;C&quot; 
+##  [6,] &quot;T&quot;  &quot;C&quot; 
+##  [7,] &quot;T&quot;  &quot;C&quot; 
+##  [8,] &quot;T&quot;  &quot;C&quot; 
+##  [9,] &quot;C&quot;  &quot;C&quot; 
+## [10,] &quot;T&quot;  &quot;C&quot; 
+## [11,] &quot;C&quot;  &quot;C&quot; 
+## [12,] &quot;T&quot;  &quot;C&quot; 
+## [13,] &quot;T&quot;  &quot;C&quot; 
+## [14,] &quot;T&quot;  &quot;C&quot; 
+## [15,] &quot;C&quot;  &quot;C&quot; 
+## [16,] &quot;C&quot;  &quot;C&quot; 
+## [17,] &quot;T&quot;  &quot;T&quot; 
+## [18,] &quot;C&quot;  &quot;C&quot; 
+## [19,] &quot;C&quot;  &quot;C&quot; 
+## [20,] &quot;C&quot;  &quot;C&quot; 
+## [21,] &quot;C&quot;  &quot;C&quot; 
+## [22,] &quot;C&quot;  &quot;C&quot; 
+## [23,] &quot;T&quot;  &quot;T&quot; 
+## [24,] &quot;T&quot;  &quot;T&quot; 
+## [25,] &quot;C&quot;  &quot;C&quot; 
+## [26,] &quot;T&quot;  &quot;C&quot; 
+## [27,] &quot;C&quot;  &quot;C&quot; 
+## [28,] &quot;T&quot;  &quot;C&quot; 
+## [29,] &quot;T&quot;  &quot;T&quot; 
+## [30,] &quot;C&quot;  &quot;C&quot; 
+## [31,] &quot;T&quot;  &quot;C&quot; 
+## [32,] &quot;C&quot;  &quot;C&quot;</code></pre>
+<pre class="r"><code>colnames(smap)</code></pre>
+<pre><code>##  [1] &quot;snp.id&quot;  &quot;N10&quot;     &quot;N11&quot;     &quot;N18&quot;     &quot;N19&quot;     &quot;N21&quot;     &quot;N25&quot;    
+##  [8] &quot;N27&quot;     &quot;N28&quot;     &quot;N29&quot;     &quot;N31&quot;     &quot;N32&quot;     &quot;N34&quot;     &quot;N39&quot;    
+## [15] &quot;N40&quot;     &quot;N41&quot;     &quot;N44&quot;     &quot;N45&quot;     &quot;N47&quot;     &quot;N50&quot;     &quot;N52&quot;    
+## [22] &quot;N54&quot;     &quot;N57&quot;     &quot;N78&quot;     &quot;N80&quot;     &quot;N81&quot;     &quot;N84&quot;     &quot;N88&quot;    
+## [29] &quot;N95&quot;     &quot;N97&quot;     &quot;N104&quot;    &quot;N31.rep&quot; &quot;N57.rep&quot;</code></pre>
+<pre class="r"><code>newdat &lt;- smap[,c(-11, -23, -32, -33)]</code></pre>
+<p>We then removed all four runs involving N31 &amp; N57 since I don’t recall which - N31 or N31.rep and N57.rep or N57 - was used. I’m quite certain that the “.rep” columns were used, but I don’t know whether these two are part of the correlation issue.</p>
+<p>We then</p>
+<pre class="r"><code>split1 &lt;- function(x)strsplit(x, &quot;|&quot;)[1:2]
+  
+split2&lt;- function(x){t(split1(x))}
+
+genoparse &lt;- function(gv.actg, # gv.actg is a character vector with each entry a 2-letter genotype
+                       sid=names(gv.actg) # sid is the vector of subject IDs
+                      )  
+{
+  foo&lt;- strsplit(gv.actg, &quot;&quot;)
+  f2&lt;- matrix(ncol = 2, data=unlist(foo), byrow=TRUE)
+  o1  &lt;- apply(FUN = function(x)sum(x==f2[1]), X = f2, MARGIN=1)
+  other&lt;- f2[f2 != f2[1]][1]
+  ref &lt;- f2[1]
+  o2 &lt;- c(ref, other)
+  names(o2)&lt;- c(&quot;ref&quot;, &quot;oth&quot;)
+  names(o1)&lt;- sid
+  names(gv.actg)&lt;- sid
+  out&lt;- list(gv.actg, o1, o2)
+  names(out)&lt;- c(&quot;input_geno&quot;, &quot;genovec&quot;, &quot;allele_identities&quot;)
+  return(out)
+  }</code></pre>
+<p>Now, try genoparse function.</p>
+<pre class="r"><code>t1 &lt;- c(&quot;TT&quot;, &quot;TC&quot;, &quot;CC&quot;, &quot;CC&quot;)
+names(t1)&lt;- paste0(&quot;subj&quot;, 1:4)
+genoparse(t1)</code></pre>
+<pre><code>## $input_geno
+## subj1 subj2 subj3 subj4 
+##  &quot;TT&quot;  &quot;TC&quot;  &quot;CC&quot;  &quot;CC&quot; 
+## 
+## $genovec
+## subj1 subj2 subj3 subj4 
+##     2     1     0     0 
+## 
+## $allele_identities
+## ref oth 
+## &quot;T&quot; &quot;C&quot;</code></pre>
+<p>Next steps:</p>
+<ol style="list-style-type: decimal">
+<li>function to compare the genotype vector from geno.ord with that outputted by genoparse()</li>
+<li>after comparing, decide which allele is mapped to 1 and which to zero in geno.ord.</li>
+</ol>
+</div>
 </div>
 
 
