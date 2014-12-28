@@ -53,10 +53,6 @@ This raises a bigger question -- can I reproduce the pre-processing steps in the
 
 ## Reading text file from ngroup/snp directory
 
-```{r, eval=FALSE, cache=TRUE}
-read.delim(file.path(DATA_DIR, "snp", "Data")
-#install.packages("http://cran.r-project.org/src/contrib/Archive/gdsfmt/gdsfmt_1.0.0.tar.gz", repos=NULL)
-```
 
 ## Reading in geno.ord.RData 
 
