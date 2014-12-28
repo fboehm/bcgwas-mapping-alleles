@@ -81,12 +81,12 @@ We then removed all four runs involving N31 & N57 since I don't recall which - N
 
 We then 
 
-```{r, "genoquery-defined"}
+```{r, "genoparse-defined"}
 split1 <- function(x)strsplit(x, "|")[1:2]
   
 split2<- function(x){t(split1(x))}
 
-genocount <- function(gv.actg) # gv.actg is a character vector with each entry a 2-letter genotype
+genoparse <- function(gv.actg) # gv.actg is a character vector with each entry a 2-letter genotype
   {
   foo<- strsplit(gv.actg, "")
   f2<- matrix(ncol = 2, data=unlist(foo), byrow=TRUE)
@@ -112,5 +112,7 @@ genocount(t1)
 Next steps: 
 
 1. function to compare the genotype vector from geno.ord with that outputted by genocount()
-2. 
+2. after comparing, decide which allele is mapped to 1 and which to zero in geno.ord.
+
+
 
