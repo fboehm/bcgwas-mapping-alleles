@@ -88,18 +88,19 @@ genoparse <- function(gv.actg, # gv.actg is a character vector with each entry a
   foo<- strsplit(gv.actg, "")
   f2<- matrix(ncol = 2, data=unlist(foo), byrow=TRUE)
   o1  <- apply(FUN = function(x)sum(x==f2[1]), X = f2, MARGIN=1)
+  # define two alleles, "other" & "ref"
   other<- f2[f2 != f2[1]][1]
   ref <- f2[1]
   o2 <- c(ref, other)
   names(o2)<- c("ref", "oth")
   names(o1)<- sid
   names(gv.actg)<- sid
-  out1<- list(gv.actg, o1, o2)
+  out1<- list(f2, o1, o2)
   names(out1)<- c("input_geno", "genovec", "allele_identities")
   o4 <- c(other, ref)
   names(o4)<- c("ref", "oth")
   o3 <- 2-o1
-  out2 <- list(gv.actg, o3, o4)
+  out2 <- list(f2, o3, o4)
   names(out2)<- c("input_geno", "genovec", "allele_identities")  
   out <- list(out1, out2)
   return(out)
@@ -123,11 +124,28 @@ Next steps:
 
 
 ```{r "userfn-defined"}
-userfn <- function(rs.id, geno.ord = geno.ord, gm.actg = newdat)
+userfn <- function(rs.id, g.ord = geno.ord, gm.actg = newdat)
   {
-  
-  
+  # get subject ids
+  sid<- intersect(names(gm.actg), colnames(g.ord))
+  d1<- gm.actg[gm.actg$snp.id ==rs.id,colnames(gm.actg)%in% sid]
+  gpout<- genoparse(as.character(d1))
+  go.vec<- as.vector(g.ord[rownames(g.ord) == rs.id, colnames(g.ord) %in% sid])
+  out1 <- data.frame(gpout[[1]]$input_geno, go.vec, gpout[[1]]$genovec, gpout[[2]]$genovec)
+  # define out2 as the mapping that outputs geno.ord's codings
+  if (allequal(out1[,2], out1[,3])) out2 <- gpout[[1]]$allele_identities
+  if (allequal(out1[,2], out1[,4])) out2 <- gpout[[2]]$allele_identities
+  out <- list(out1, out2)
   return(out) # out is a list. first entry is a df with 4 columns (one subject per row): 1. genotype.actg, 2. genotype.numeric (from geno.ord), 3. genotype.actg translation #1, 4. genotype.actg translation #2. 
   }
 ```
 
+Now, let's use the userfn function.
+
+```{r}
+rs <- "rs2710875"
+userfn(rs)
+```
+
+
+Todo: revise genoparse() so that out[[1]]$input_geno is only the ACTG genotypes 
