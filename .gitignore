@@ -15,3 +15,5 @@ packrat/lib*/
 .gitignore
 .Rprofile
 *.html
+*.pdf
+mapping-alleles-bcgwas.Rmd
