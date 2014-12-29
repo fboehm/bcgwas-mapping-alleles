@@ -158,6 +158,7 @@ A search for "1000 genomes"  on bioconductor.org site pointed me to ceu1kg packa
 ```{r "install-ceu1kg", eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
 biocLite("ceu1kg")
+biocLite("SNPlocs.Hsapiens.dbSNP.20101109")
 ```
 
 Now, let's look at it.
