@@ -106,7 +106,6 @@ genoparse <- function(gv.actg, # gv.actg is a character vector with each entry a
   return(out)
   }
 
-
 ```
 
 Now, try genoparse function.
@@ -128,7 +127,7 @@ userfn <- function(rs.id, g.ord = geno.ord, gm.actg = newdat)
   {
   # get subject ids
   sid<- intersect(names(gm.actg), colnames(g.ord))
-  d1<- gm.actg[gm.actg$snp.id ==rs.id,colnames(gm.actg)%in% sid]
+  d1<- split1(gm.actg[gm.actg$snp.id ==rs.id,colnames(gm.actg)%in% sid])
   gpout<- genoparse(as.character(d1))
   go.vec<- as.vector(g.ord[rownames(g.ord) == rs.id, colnames(g.ord) %in% sid])
   out1 <- data.frame(gpout[[1]]$input_geno, go.vec, gpout[[1]]$genovec, gpout[[2]]$genovec)
