@@ -17,3 +17,6 @@ packrat/lib*/
 *.html
 *.pdf
 mapping-alleles-bcgwas.Rmd
+1kg-data/*
+
+
