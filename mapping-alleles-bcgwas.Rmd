@@ -1,8 +1,11 @@
 ---
-title: "Untitled"
+title: "BCGWAS: Mapping alleles from bcgwas website and gtexportal"
 author: "Fred Boehm"
 date: "December 16, 2014"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_depth: 4
 ---
 
 ## Revision to original strategy
@@ -11,6 +14,11 @@ My earlier idea was to download annotation files from illumina.com. However, I w
 
 Note that we'll also need to see how I coded the alleles when creating the numeric genotypes.
 
+```{r, "setup"}
+library(knitr)
+library(stringr)
+opts_knit$set(progress = TRUE, verbose = TRUE, cache=TRUE)
+```
 
 ## Downloading annotation files from www.biostat.wisc.edu/~ngroup/bcgwas/SNPB/
 
@@ -31,6 +39,7 @@ head(smap1)
 It seems that the SNP_Map.csv file contains  insufficient. I'll check the other file, "ForwardStrand_FinalReport.csv"
 
 ```{r, cache=TRUE}
+
 smap<- read.csv(file.path(DATA_DIR,"ForwardStrand_FinalReport.csv"), skip=9, colClasses= "character")
 names(smap)[1] <- "snp.id"
 head(smap)
@@ -75,8 +84,6 @@ We then
 
 ```{r, "genoparse-defined"}
 
-
-
 genoparse <- function(gv.actg, # gv.actg is a character vector with each entry a 2-letter genotype
                        sid=names(gv.actg) # sid is the vector of subject IDs
                       )  
@@ -118,8 +125,8 @@ Next steps:
 2. after comparing, decide which allele is mapped to 1 and which to zero in geno.ord.
 
 
-```{r "userfn-defined"}
-userfn <- function(rs.id, 
+```{r "matchalleles-defined"}
+matchalleles <- function(rs.id, 
                    g.ord = geno.ord
                    , 
                    gm.actg = newdat
@@ -145,7 +152,7 @@ Now, let's use the userfn function.
 
 ```{r}
 rs <- "rs2710875"
-userfn(rs)
+matchalleles(rs)
 ```
 
 
@@ -176,6 +183,7 @@ c1gt
 
 
 ```{r}
+# Consider removing this chunk! Note that it uses an old version of SNPlocs
 library(SNPlocs.Hsapiens.dbSNP.20101109)
 if (!exists("c1loc")) c1loc = getSNPlocs("ch1", as.GRanges=TRUE)
 c1loc
@@ -200,8 +208,80 @@ sessionInfo()
 ```
 
 
+We initially sought to read the vcf file with read.delim. 
+
+```{r, eval=FALSE}
+vc <- read.delim("ALL.BCM.20101123.snps.low_coverage.sites.vcf")
+```
+
+We examine the top of the file using head from bash: 
+
+
+head ALL.BCM.20101123.snps.low_coverage.sites.vcf
+
+
+Below, we need to verify that the reference allele gets put first (and alternate second) when creating the gds file. 
+
+GWASTools has functions to work with gdsfmt files and can convert vcf file to gds format. 
+
+```{r, "using-gwastools", cache=TRUE}
+library(GWASTools)
+#convertVcfGds("ALL.wg.NCBI.20101123.snps.sites.vcf", "ALL.wg.NCBI.20101123.snps.sites.gds") 
+onekg<- read.table("1kg-data/ALL.wg.NCBI.20101123.snps.sites.vcf")
+```
 
 
 
+NOTE: 
+Since the downloaded vcf file (from one thousand genomes website) doesn't have rsids, we'll get them from the dbsnp package on bioconductor.
 
-function(rs.id)
+```{r "install-dbsnp", eval = FALSE}
+source("http://bioconductor.org/biocLite.R")
+biocLite("SNPlocs.Hsapiens.dbSNP141.GRCh38")
+```
+
+The above code failed, saying that the package was available as a source, but not as a binary. So, I downloaded the source and installed from command line. I initially tried to use install.packages() within an R session, but I got an error that the file is not a mac osx binary package. I then used R CMD INSTALL from the bash command line, and that installed it.
+
+
+#### Mapping from rsid's to chromosome & position
+
+We treat the first 
+
+```{r}
+library(SNPlocs.Hsapiens.dbSNP141.GRCh38)
+# remove col 8 from "onekg"
+onekga <- onekg[,1:7]
+names(onekga)[c(1:2,4:5)]<- 
+```
+
+Can we use readVcf() instead of read.table?
+
+```{r}
+library(VariantAnnotation)
+seqinfo("1kg-data/ALL.BCM.20101123.snps.low_coverage.sites.vcf")
+readVcf("1kg-data/test.vcf")
+```
+
+
+## Using GTEx_genot_imputed_variants_info4_maf05_CR95_CHR_POSb37_ID_REF_ALT.txt
+
+We had downloaded on December 11, 2014 the file GTEx_genot_imputed_variants_info4_maf05_CR95_CHR_POSb37_ID_REF_ALT.txt.zip. Today (2 January 2015) we unzipped it. In using 'head' from bash shell, it looks like it is the map that we need to complete our work. Note that wc (wordcount) from bash shell showed it to have more than 6 million lines.
+
+```{r}
+gt<- read.table("../gtex/testg")
+names(gt)<- c("Chrom", "Pos", "rs.id", "ref.allele", "alt.allele")
+```
+
+
+
+```{r}
+sessionInfo()
+```
+
+
+# Other considerations
+
+- Use eQTL package
+- Use vignette here: http://master.bioconductor.org/help/workflows/eQTL/
+
+
