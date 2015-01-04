@@ -1,0 +1,148 @@
+---
+title: 'BCGWAS: Mapping alleles from bcgwas website and gtexportal'
+author: "Fred Boehm"
+date: "January 2, 2015"
+output: html_document
+---
+
+### Strategy overview
+
+Our strategy involves two mappings:
+
+1. Map geno.ord.RData file (which contains the genotype data on Nate's website) to the original text files that Michael N. obtained from Washington University's ftp site. This will give us a way to translate the numeric genotypes on Nate's website to the ACTG genotypes.
+
+2. We downloaded the file "GTEx_genot_imputed_variants_info4_maf05_CR95_CHR_POSb37_ID_REF_ALT.txt.zip" and, after unzipping it, we used the resulting file, "GTEx_genot_imputed_variants_info4_maf05_CR95_CHR_POSb37_ID_REF_ALT.txt" to get, for a given SNP, the identity (ACTG) of the reference allele and that of the alternate allele.
+
+Using 1 & 2 above, we created an output object that enables the user to translate plots from both sites (1. Nate's bcgwas site and 2. gtex portal site) to their ACTG genotypes. Hence, we can translate the two sites as needed. 
+
+
+### Current limitations
+
+One thing to keep in mind is the two strands of DNA. We haven't yet accounted for it. While the gtex portal uses 1000 genomes coding, the bcgwas site doesn't necessarily use the same strand as the 1000 genomes project. Thus, there will be some SNPs where we need to consider the possibility that the two sites don't use the same strand. There may a SNP annotation file from Illumina that we can use to account for the strand issue. 
+
+### Detailed methods
+
+```{r, "setup"}
+library(knitr)
+library(stringr)
+opts_knit$set(progress = TRUE, verbose = TRUE, cache=TRUE)
+```
+
+
+```{r}
+DATA_DIR <- "../bcgwas-ngroup/data"
+rs <- "rs2710875"
+```
+
+
+```{r, cache=TRUE}
+
+smap<- read.csv(file.path(DATA_DIR,"ForwardStrand_FinalReport.csv"), skip=9, colClasses= "character")
+names(smap)[1] <- "snp.id"
+head(smap)
+```
+
+```{r "reading-geno.ord", cache=TRUE, eval=TRUE}
+load("../bcgwas-data/EIGENBCGWAS_Data/geno.ord.RData") # loads geno.ord
+library(GWASTools)
+library(stringr)# for subsequent manipulations of actg genotypes
+sann<- pData(getobj("../bcgwas-data/SNP_annotation/illumina.madison.snp.annot.v3.RData"))
+```
+
+```{r "make-newdat", cache=TRUE, eval=TRUE}
+newdat <- smap[,c(-11, -23, -32, -33)]# remove the samples that have more than 1 run each.
+```
+
+We then removed all four runs involving N31 or N57 since I don't recall which - N31 or N31.rep and N57.rep or N57 - was used. I'm quite certain that the ".rep" columns were used, but I don't recall whether these two are part of the correlation issue.
+
+We then 
+
+```{r, "genoparse-defined"}
+
+genoparse <- function(gv.actg, # gv.actg is a character vector with each entry a 2-letter genotype
+                       sid=names(gv.actg) # sid is the vector of subject IDs
+                      )  
+{
+  foo<- strsplit(gv.actg, "")
+  f2<- matrix(ncol = 2, data=unlist(foo), byrow=TRUE)
+  o1  <- apply(FUN = function(x)sum(x==f2[1]), X = f2, MARGIN=1)
+  # define two alleles, "other" & "ref"
+  other<- f2[f2 != f2[1]][1]
+  ref <- f2[1]
+  o2 <- c(ref, other)
+  names(o2)<- c("ref", "oth")
+  names(o1)<- sid
+  names(gv.actg)<- sid
+  out1<- list(f2, o1, o2)
+  names(out1)<- c("input_geno", "genovec", "allele_identities")
+  o4 <- c(other, ref)
+  names(o4)<- c("ref", "oth")
+  o3 <- 2-o1
+  out2 <- list(f2, o3, o4)
+  names(out2)<- c("input_geno", "genovec", "allele_identities")  
+  out <- list(out1, out2)
+  return(out)
+  }
+
+```
+
+Now, try genoparse function.
+
+```{r}
+t1 <- c("TT", "TC", "CC", "CC")
+names(t1)<- paste0("subj", 1:4)
+genoparse(t1)
+```
+
+
+```{r "matchalleles-defined"}
+matchalleles <- function(rs.id, 
+                   g.ord = geno.ord
+                   , 
+                   gm.actg = newdat
+                   )
+  {
+  # get subject ids
+  sid<- intersect(names(gm.actg), colnames(g.ord))
+  d1<- str_extract(as.character(gm.actg[gm.actg$snp.id ==rs.id,colnames(gm.actg)%in% sid]), "[A-Z]+")
+  gpout<- genoparse(as.character(d1))
+  go.vec<- as.vector(g.ord[rownames(g.ord) == rs.id, colnames(g.ord) %in% sid])
+  out1 <- data.frame(gpout[[1]]$input_geno, t(go.vec), gpout[[1]]$genovec, gpout[[2]]$genovec)
+  # define out2 as the mapping that outputs geno.ord's codings
+  if (allequal(out1[,3], out1[,4])) out2 <- gpout[[1]]$allele_identities
+  if (allequal(out1[,3], out1[,5])) out2 <- gpout[[2]]$allele_identities
+  out3 <- c(paste0(out2[1], out2[1]), paste0(out2[1], out2[2]), paste0(out2[2], out2[2]))
+  names(out3)<- c("geno.2", "geno.1", "geno.0")
+  out <- list(out1, out2, out3)
+  return(out) # out is a list. first entry is a df with 4 columns (one subject per row): 1. genotype.actg, 2. genotype.numeric (from geno.ord), 3. genotype.actg translation #1, 4. genotype.actg translation #2. 
+  }
+```
+
+Now, let's use the matchalleles function.
+
+```{r}
+
+matchalleles(rs)
+```
+
+```{r}
+gt<- read.table("../gtex/testg")
+names(gt)<- c("Chrom", "Pos", "rs.id", "ref.allele", "alt.allele")
+```
+
+```{r}
+gt<- read.table("../gtex/GTEx_genot_imputed_variants_info4_maf05_CR95_CHR_POSb37_ID_REF_ALT.txt")
+names(gt)<- c("Chrom", "Pos", "rs.id", "ref.allele", "alt.allele")
+gt[gt$rs.id %in% rs,]
+```
+
+
+
+
+
+
+```{r "sessionInfo"}
+sessionInfo()
+```
+
+

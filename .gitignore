@@ -18,5 +18,4 @@ packrat/lib*/
 *.pdf
 mapping-alleles-bcgwas.Rmd
 1kg-data/*
-
-
+mapping-alleles-bcgwas-toMichael_cache
